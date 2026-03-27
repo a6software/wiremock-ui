@@ -1,0 +1,445 @@
+{
+  "mappings": [
+    {
+      "id": "18d95748-12e3-444a-98d1-c274dea2f4bc",
+      "request": {
+        "url": "/demo/users/OTHER_USER",
+        "method": "POST"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "username": "OTHER_USER",
+          "name": "John Smith",
+          "email": "john.smith@mail.com",
+          "profile": {
+            "grade": "grade1",
+            "role": "role1"
+          },
+          "permissions": []
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "18d95748-12e3-444a-98d1-c274dea2f4bc"
+    },
+    {
+      "id": "3f531b8a-3dcc-4040-9063-07c8d173996a",
+      "request": {
+        "url": "/directory/users/OTHER_USER/email",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "username": "OTHER_USER",
+          "email": "John.Smith@fake-example.com",
+          "verified": true
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "3f531b8a-3dcc-4040-9063-07c8d173996a"
+    },
+    {
+      "id": "8621f8f3-2f56-47a3-a635-784b175b405f",
+      "request": {
+        "urlPattern": "/directory/users/OTHER_USER",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "staffId": 231232,
+          "username": "OTHER_USER",
+          "active": true,
+          "name": "John Smith",
+          "authSource": "demo-idp",
+          "firstName": "John",
+          "lastName": "Smith",
+          "email": "John.Smith@fake-example.com"
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "8621f8f3-2f56-47a3-a635-784b175b405f"
+    },
+    {
+      "id": "16624018-505c-4484-8664-3c86c6a6f142",
+      "request": {
+        "urlPattern": "/directory/users/OTHER_USER/roles",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "id": 1,
+            "roleName": "tester"
+          },
+          {
+            "id": 2,
+            "roleName": "developer"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "16624018-505c-4484-8664-3c86c6a6f142"
+    },
+    {
+      "id": "bca0225c-11e5-4b8b-90ea-55e2edf19043",
+      "request": {
+        "url": "/demo/users/OTHER_USER",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "username": "OTHER_USER",
+          "name": "John Smith",
+          "email": "john.smith@mail.com",
+          "profile": {
+            "grade": "grade1",
+            "role": "role1"
+          },
+          "permissions": [
+            {
+              "id": 1,
+              "roleName": "tester"
+            },
+            {
+              "id": 2,
+              "roleName": "developer"
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "bca0225c-11e5-4b8b-90ea-55e2edf19043"
+    },
+    {
+      "id": "24f9f5f5-563c-4ce7-951d-2d9e3db02695",
+      "request": {
+        "url": "/demo/users/DEMO_USER",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "username": "DEMO_USER",
+          "name": "John Smith",
+          "email": "john.smith@mail.com",
+          "profile": {
+            "grade": "grade1",
+            "role": "role1"
+          },
+          "permissions": []
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "24f9f5f5-563c-4ce7-951d-2d9e3db02695"
+    },
+    {
+      "id": "1e8d9a9c-3a5c-4451-8398-56804f3944df",
+      "request": {
+        "urlPattern": "/directory/users/DEMO_USER/roles",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "id": 1,
+            "roleName": "tester"
+          },
+          {
+            "id": 2,
+            "roleName": "reviewer"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "1e8d9a9c-3a5c-4451-8398-56804f3944df"
+    },
+    {
+      "id": "1a34ca56-cb1b-4c82-a1d4-3c679701e059",
+      "request": {
+        "urlPattern": "/auth/logout.*",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "body": "<html><body>Login page<h1>Sign in</h1></body></html>",
+        "headers": {
+          "Content-Type": "text/html"
+        }
+      },
+      "uuid": "1a34ca56-cb1b-4c82-a1d4-3c679701e059"
+    },
+    {
+      "id": "e3049099-17eb-4250-8133-b2c798ed6eaa",
+      "request": {
+        "urlPattern": "/verification/token/verify",
+        "method": "POST"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "active": "true"
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "e3049099-17eb-4250-8133-b2c798ed6eaa"
+    },
+    {
+      "id": "355da0b2-333d-4577-b85d-40e463e61db6",
+      "request": {
+        "urlPattern": "/directory/users/DEMO_USER",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "staffId": 231232,
+          "username": "DEMO_USER",
+          "active": true,
+          "name": "John Smith",
+          "authSource": "demo-idp",
+          "firstName": "John",
+          "lastName": "Smith",
+          "roles": [
+            "DEMO_TESTER",
+            "DEMO_REVIEWER"
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "355da0b2-333d-4577-b85d-40e463e61db6"
+    },
+    {
+      "id": "09345b90-ab97-4d73-a001-19aac6c923c0",
+      "request": {
+        "urlPattern": "/auth/oauth/authorize\\\\?response_type=code&redirect_uri=.+?&state=.+?&client_id=demo-client",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "body": "<html><body>Login page<h1>Sign in</h1></body></html>",
+        "headers": {
+          "Content-Type": "text/html",
+          "Location": "http://localhost:3007/login/callback?code=codexxxx&state=stateyyyy"
+        }
+      },
+      "uuid": "09345b90-ab97-4d73-a001-19aac6c923c0"
+    },
+    {
+      "id": "fcfce24d-60b0-4bdb-8e20-2f1702c8cb89",
+      "request": {
+        "urlPattern": "/auth/oauth/token",
+        "method": "POST"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "access_token": "token",
+          "token_type": "bearer",
+          "user_name": "DEMO_USER",
+          "expires_in": 599,
+          "scope": "read",
+          "internalUser": true
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Location": "http://localhost:3007/login/callback?code=codexxxx&state=stateyyyy"
+        }
+      },
+      "uuid": "fcfce24d-60b0-4bdb-8e20-2f1702c8cb89"
+    },
+    {
+      "id": "f2dfe468-142d-4813-bda3-5153a9571491",
+      "request": {
+        "urlPattern": "/favicon.ico",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200
+      },
+      "uuid": "f2dfe468-142d-4813-bda3-5153a9571491"
+    },
+    {
+      "id": "4c59729c-2bce-44a4-a5a8-13035b85eb79",
+      "request": {
+        "urlPattern": "/directory/users/DEMO_USER/roles",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "id": 3,
+            "roleName": "observer"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "4c59729c-2bce-44a4-a5a8-13035b85eb79"
+    },
+    {
+      "id": "63c1aa10-703f-487b-b319-096e9d134d89",
+      "request": {
+        "url": "/demo/groups?groupTypes=EXTERNAL_TESTER",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "id": 123,
+            "groupName": "Group 123",
+            "groupType": "GROUP_123",
+            "siteAffiliation": "ABC",
+            "members": [],
+            "siteAffiliationDescription": "Demo Site ABC"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "63c1aa10-703f-487b-b319-096e9d134d89"
+    },
+    {
+      "id": "2660fe62-b8f1-4201-aed1-8896924d1395",
+      "request": {
+        "url": "/demo/groups",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "id": 123,
+            "groupName": "Group 123",
+            "groupType": "GROUP_123",
+            "siteAffiliation": "ABC",
+            "members": [],
+            "siteAffiliationDescription": "Demo Site ABC"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "2660fe62-b8f1-4201-aed1-8896924d1395"
+    },
+    {
+      "id": "46f21350-a44a-4a35-ad49-c2607e106039",
+      "request": {
+        "url": "/locations/api/sites/type/primary",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "siteId": "SITE-A",
+            "description": "Demo Site A",
+            "siteType": "Primary",
+            "active": true
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "46f21350-a44a-4a35-ad49-c2607e106039"
+    },
+    {
+      "id": "09c787a6-1d0a-4ec3-b778-71870c91b74b",
+      "request": {
+        "url": "/assignmentsapi/users/DEMO_USER/workloads",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "workloads": [
+            {
+              "id": "TEAM-A"
+            },
+            {
+              "id": "TEAM-B"
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "09c787a6-1d0a-4ec3-b778-71870c91b74b"
+    },
+    {
+      "id": "0461452e-8bd5-412f-8853-fc2d4de3347a",
+      "request": {
+        "url": "/directory/users/DEMO_USER/email",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "username": "DEMO_USER",
+          "email": "demo.user@example.test",
+          "verified": true
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "0461452e-8bd5-412f-8853-fc2d4de3347a"
+    },
+    {
+      "id": "ba8f07b9-f08b-4774-9809-8592e4886671",
+      "request": {
+        "url": "/demo/users/DEMO_USER",
+        "method": "POST"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "username": "DEMO_USER",
+          "name": "John Smith",
+          "email": "john.smith@mail.com",
+          "profile": {
+            "grade": "grade1",
+            "role": "role1"
+          },
+          "permissions": []
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "ba8f07b9-f08b-4774-9809-8592e4886671"
+    }
+  ],
+  "meta": {
+    "total": 20
+  }
+}

@@ -1,0 +1,8 @@
+.gradle/
+build/
+*.log
+.idea/
+out/
+example/node_modules/
+example/playwright-report/
+example/test-results/

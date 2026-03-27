@@ -1,0 +1,19 @@
+services:
+  wiremock:
+    image: rodolpheche/wiremock
+    container_name: wiremock-frontend-example-wiremock
+    ports:
+      - "9091:8080"
+    volumes:
+      - ../src/test/resources/wiremock-mappings.json:/home/wiremock/mappings/wiremock-mappings.json:ro
+
+  wiremock-frontend:
+    image: example-wiremock-frontend:latest
+    container_name: wiremock-frontend-example-ui
+    depends_on:
+      - wiremock
+    environment:
+      - WIREMOCK_BASE_URL=http://wiremock:8080
+      - PORT=8782
+    ports:
+      - "8783:8782"

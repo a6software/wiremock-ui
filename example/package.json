@@ -1,0 +1,15 @@
+{
+  "name": "wiremock-frontend-example",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "compose:up": "docker compose -f docker-compose.yml up",
+    "compose:down": "docker compose -f docker-compose.yml down --remove-orphans",
+    "pretest:e2e": "playwright install chromium && docker build -t example-wiremock-frontend:latest .. && docker compose -f docker-compose.yml up -d --force-recreate --remove-orphans",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2"
+  }
+}

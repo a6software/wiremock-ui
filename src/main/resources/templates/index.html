@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WireMock Frontend</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+</head>
+<body>
+<div class="page-shell">
+    <header class="hero">
+        <div class="hero-copy">
+            <h1>Wiremock Mappings</h1>
+            <p class="sub">
+                This page fetches the current WireMock admin payload on refresh and presents routes, methods, status codes,
+                content types, and response bodies in one place.
+            </p>
+        </div>
+        <div class="hero-panel">
+            <div class="metric">
+                <span>Total mappings</span>
+                <strong th:text="${dashboard != null ? dashboard.totalMappings : 0}">0</strong>
+            </div>
+            <div class="metric source">
+                <span>Source</span>
+                <a th:if="${dashboard != null}" th:href="${dashboard.sourceUrl}" th:text="${dashboard.sourceUrl}" target="_blank" rel="noreferrer">http://wiremock:8080/__admin/mappings</a>
+                <span th:unless="${dashboard != null}">Unavailable</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="flash error" th:if="${fetchError}" th:text="${fetchError}">
+        Unable to reach WireMock
+    </section>
+
+    <main class="layout" th:if="${dashboard != null}">
+        <section class="toolbar panel">
+            <div>
+                <h2>Filter mappings</h2>
+                <p class="muted">Search by route first, then expand for more filters.</p>
+            </div>
+            <div class="filters">
+                <label>
+                    <span>Search by route</span>
+                    <input id="mapping-search" type="search" placeholder="/demo/users">
+                </label>
+            </div>
+            <details id="advanced-filters" class="advanced-filters">
+                <summary>More filters</summary>
+                <div class="advanced-filter-grid">
+                    <section>
+                        <h3>Methods</h3>
+                        <div id="method-filters" class="checkbox-group"></div>
+                    </section>
+                    <section>
+                        <h3>Matchers</h3>
+                        <div id="matcher-filters" class="checkbox-group"></div>
+                    </section>
+                    <section>
+                        <h3>Status</h3>
+                        <div id="status-filters" class="checkbox-group"></div>
+                    </section>
+                </div>
+            </details>
+            <p class="result-summary"><span id="visible-count" th:text="${#lists.size(dashboard.mappings)}">0</span> visible</p>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <h2>Live route catalogue</h2>
+                <a class="refresh-link" href="" id="refresh-link">Refresh</a>
+            </div>
+            <div class="route-table-wrap" th:if="${!#lists.isEmpty(dashboard.mappings)}">
+                <table class="route-table">
+                    <thead>
+                    <tr>
+                        <th class="toggle-cell">
+                            <button type="button" id="expand-all-button" class="expand-toggle" aria-expanded="false" aria-label="Expand all rows">
+                                <span class="chevron" aria-hidden="true">▸</span>
+                            </button>
+                        </th>
+                        <th><button type="button" class="sort-button" data-sort-key="method">Method</button></th>
+                        <th><button type="button" class="sort-button" data-sort-key="route">Route</button></th>
+                        <th><button type="button" class="sort-button" data-sort-key="matcher">Matcher</button></th>
+                        <th><button type="button" class="sort-button" data-sort-key="status">Status</button></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="mapping, rowStat : ${dashboard.mappings}">
+                        <tr
+                            class="route-row"
+                            th:attr="data-method=${mapping.method},data-search=${#strings.toLowerCase(mapping.method + ' ' + mapping.route + ' ' + mapping.matcherType + ' ' + mapping.status)},data-index=${rowStat.index},data-route=${mapping.route},data-matcher=${mapping.matcherType},data-status=${mapping.status},data-content-type=${mapping.contentType},data-id=${mapping.id}">
+                            <td class="toggle-cell">
+                                <button
+                                    type="button"
+                                    class="expand-toggle"
+                                    th:attr="aria-controls=${'route-detail-' + rowStat.index},data-detail-id=${'route-detail-' + rowStat.index}"
+                                    aria-expanded="false">
+                                    <span class="chevron" aria-hidden="true">▸</span>
+                                    <span class="sr-only">Expand row</span>
+                                </button>
+                            </td>
+                            <td><span class="method-pill" th:text="${mapping.method}">GET</span></td>
+                            <td class="route-cell">
+                                <button type="button" class="copy-route-button" th:attr="data-route=${mapping.route}" aria-label="Copy route">
+                                    <span aria-hidden="true">⧉</span>
+                                </button>
+                                <code th:text="${mapping.route}">/example/path</code>
+                            </td>
+                            <td><span class="matcher-pill" th:text="${mapping.matcherType}">Exact URL</span></td>
+                            <td><span class="status-pill" th:text="${mapping.status}">200</span></td>
+                        </tr>
+                        <tr
+                            class="route-detail-row hidden"
+                            th:attr="id=${'route-detail-' + rowStat.index},data-detail-for=${rowStat.index}">
+                            <td colspan="5">
+                                <div class="route-detail-grid">
+                                    <div>
+                                        <div class="detail-label">Content type</div>
+                                        <div th:text="${mapping.contentType}">application/json</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Mapping ID</div>
+                                        <div class="mono-cell" th:text="${mapping.id}">mapping-id</div>
+                                    </div>
+                                </div>
+                                <div class="detail-label payload-label">Payload</div>
+                                <pre th:text="${mapping.bodyPreview}">No response body</pre>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+            <div class="empty-state" th:if="${#lists.isEmpty(dashboard.mappings)}">
+                No mappings were returned by WireMock.
+            </div>
+            <div id="client-empty-state" class="empty-state hidden">
+                No mappings match the current search.
+            </div>
+        </section>
+    </main>
+
+    <section class="panel empty-state" th:if="${dashboard == null}">
+        Start the app with a reachable `WIREMOCK_BASE_URL` and refresh this page.
+    </section>
+</div>
+<script th:src="@{/js/filter.js}" src="/js/filter.js"></script>
+</body>
+</html>
