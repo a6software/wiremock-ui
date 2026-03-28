@@ -2,6 +2,8 @@
 
 Small Kotlin/Spring Boot + Thymeleaf UI for browsing live WireMock mappings.
 
+![Wiremock mappings screenshot](docs/images/readme-screenshot.png)
+
 The app fetches the current admin payload from `WIREMOCK_BASE_URL/__admin/mappings` on each page refresh and renders:
 
 - route and matcher type
