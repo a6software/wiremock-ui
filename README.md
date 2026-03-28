@@ -51,6 +51,15 @@ Then open `http://localhost:8782`.
 Published image on `main`:
 
 ```bash
+docker pull ghcr.io/a6software/wiremock-ui:main
+```
+
+Tagged releases publish semantic version Docker tags such as:
+
+```bash
+docker pull ghcr.io/a6software/wiremock-ui:1.2.3
+docker pull ghcr.io/a6software/wiremock-ui:1.2
+docker pull ghcr.io/a6software/wiremock-ui:1
 docker pull ghcr.io/a6software/wiremock-ui:latest
 ```
 
@@ -72,3 +81,15 @@ docker pull ghcr.io/a6software/wiremock-ui:latest
 ```bash
 ./gradlew test
 ```
+
+## Release
+
+Use the `Create Release Tag` GitHub Action and choose `patch`, `minor`, or `major`.
+
+That action creates and pushes the next `vX.Y.Z` git tag. The `Publish Docker Image`
+workflow then publishes matching Docker tags:
+
+- `1.2.3`
+- `1.2`
+- `1`
+- `latest`

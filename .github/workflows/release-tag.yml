@@ -1,0 +1,94 @@
+name: Create Release Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Select which semantic version part to bump
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch tags
+        run: git fetch --force --tags origin
+
+      - name: Calculate next version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          latest_tag="$(git tag --list 'v*' --sort=-version:refname | head -n 1)"
+
+          if [[ -z "${latest_tag}" ]]; then
+            major=0
+            minor=0
+            patch=0
+          else
+            version="${latest_tag#v}"
+            IFS='.' read -r major minor patch <<< "${version}"
+          fi
+
+          case "${{ inputs.release_type }}" in
+            major)
+              major=$((major + 1))
+              minor=0
+              patch=0
+              ;;
+            minor)
+              if [[ -z "${latest_tag}" ]]; then
+                minor=1
+                patch=0
+              else
+                minor=$((minor + 1))
+                patch=0
+              fi
+              ;;
+            patch)
+              if [[ -z "${latest_tag}" ]]; then
+                minor=1
+                patch=0
+              else
+                patch=$((patch + 1))
+              fi
+              ;;
+          esac
+
+          next_tag="v${major}.${minor}.${patch}"
+          echo "next_tag=${next_tag}" >> "${GITHUB_OUTPUT}"
+
+      - name: Create and push tag
+        env:
+          NEXT_TAG: ${{ steps.version.outputs.next_tag }}
+        run: |
+          git tag "${NEXT_TAG}"
+          git push origin "${NEXT_TAG}"
+
+      - name: Publish summary
+        env:
+          NEXT_TAG: ${{ steps.version.outputs.next_tag }}
+        run: |
+          {
+            echo "Created release tag ${NEXT_TAG}"
+            echo "Docker publish workflow will build tags from this release."
+          } >> "${GITHUB_STEP_SUMMARY}"
