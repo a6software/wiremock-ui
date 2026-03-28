@@ -1,6 +1,6 @@
 # WireMock Frontend
 
-Small Kotlin/Spring Boot + Thymeleaf UI for browsing live WireMock mappings.
+An easier way to browse WireMock mappings than digging through raw admin JSON.
 
 ![Wiremock mappings screenshot](docs/images/readme-screenshot.png)
 
