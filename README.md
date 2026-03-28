@@ -86,10 +86,18 @@ docker pull ghcr.io/a6software/wiremock-ui:latest
 
 ## Release
 
-Use the `Create Release Tag` GitHub Action and choose `patch`, `minor`, or `major`.
+Use the `Create Release` GitHub Action and choose `patch`, `minor`, or `major`.
 
-That action creates and pushes the next `vX.Y.Z` git tag. The `Publish Docker Image`
-workflow then publishes matching Docker tags:
+That workflow:
+
+- runs the Kotlin and Playwright test suites
+- pauses at the `release` environment for approval if you configure required reviewers
+- creates the next `vX.Y.Z` git tag
+- publishes the matching Docker tags
+- creates a GitHub release
+
+To get the approve or reject step in Actions, create a `release` environment in GitHub and add
+required reviewers to it.
 
 - `1.2.3`
 - `1.2`

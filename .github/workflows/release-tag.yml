@@ -1,4 +1,4 @@
-name: Create Release Tag
+name: Create Release
 
 on:
   workflow_dispatch:
@@ -13,21 +13,66 @@ on:
           - major
 
 jobs:
-  tag:
+  kotlin-tests:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Run Gradle tests
+        run: ./gradlew test
+
+  playwright-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: example/package-lock.json
+
+      - name: Install example dependencies
+        working-directory: ./example
+        run: npm ci
+
+      - name: Install Playwright browser
+        working-directory: ./example
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright end-to-end tests
+        working-directory: ./example
+        run: npm run test:e2e
+
+  calculate-version:
+    runs-on: ubuntu-latest
+    needs:
+      - kotlin-tests
+      - playwright-tests
     permissions:
-      contents: write
+      contents: read
+    outputs:
+      next_tag: ${{ steps.version.outputs.next_tag }}
+      release_version: ${{ steps.version.outputs.release_version }}
+      major: ${{ steps.version.outputs.major }}
+      minor: ${{ steps.version.outputs.minor }}
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Fetch tags
         run: git fetch --force --tags origin
@@ -76,19 +121,103 @@ jobs:
 
           next_tag="v${major}.${minor}.${patch}"
           echo "next_tag=${next_tag}" >> "${GITHUB_OUTPUT}"
-
-      - name: Create and push tag
-        env:
-          NEXT_TAG: ${{ steps.version.outputs.next_tag }}
-        run: |
-          git tag "${NEXT_TAG}"
-          git push origin "${NEXT_TAG}"
+          echo "release_version=${next_tag#v}" >> "${GITHUB_OUTPUT}"
+          echo "major=${major}" >> "${GITHUB_OUTPUT}"
+          echo "minor=${minor}" >> "${GITHUB_OUTPUT}"
 
       - name: Publish summary
         env:
           NEXT_TAG: ${{ steps.version.outputs.next_tag }}
         run: |
           {
-            echo "Created release tag ${NEXT_TAG}"
-            echo "Docker publish workflow will build tags from this release."
+            echo "Prepared release ${NEXT_TAG}"
+            echo "Waiting for release approval before publishing."
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - calculate-version
+    environment:
+      name: release
+    permissions:
+      contents: write
+      packages: write
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ghcr.io/a6software/wiremock-ui
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+      NEXT_TAG: ${{ needs.calculate-version.outputs.next_tag }}
+      RELEASE_VERSION: ${{ needs.calculate-version.outputs.release_version }}
+      RELEASE_MAJOR: ${{ needs.calculate-version.outputs.major }}
+      RELEASE_MINOR: ${{ needs.calculate-version.outputs.minor }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        run: git fetch --force --tags origin
+
+      - name: Create release tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${NEXT_TAG}"
+          git push origin "${NEXT_TAG}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ env.RELEASE_VERSION }}
+            type=raw,value=${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}
+            type=raw,value=${{ env.RELEASE_MAJOR }}
+            type=raw,value=latest
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.title=wiremock-ui
+            org.opencontainers.image.description=Standalone WireMock frontend
+            org.opencontainers.image.version=${{ env.RELEASE_VERSION }}
+
+      - name: Build and push release Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${NEXT_TAG}" \
+            --target "${GITHUB_SHA}" \
+            --title "${NEXT_TAG}" \
+            --generate-notes \
+            --latest
+
+      - name: Publish summary
+        env:
+          NEXT_TAG: ${{ env.NEXT_TAG }}
+        run: |
+          {
+            echo "Released ${NEXT_TAG}"
+            echo "Published Docker tags ${RELEASE_VERSION}, ${RELEASE_MAJOR}.${RELEASE_MINOR}, ${RELEASE_MAJOR}, and latest."
           } >> "${GITHUB_STEP_SUMMARY}"
