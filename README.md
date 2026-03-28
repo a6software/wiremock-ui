@@ -56,6 +56,10 @@ Published image on `main`:
 docker pull ghcr.io/a6software/wiremock-ui:main
 ```
 
+Package page:
+
+https://github.com/orgs/a6software/packages/container/package/wiremock-ui
+
 Tagged releases publish semantic version Docker tags such as:
 
 ```bash
