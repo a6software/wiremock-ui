@@ -118,6 +118,11 @@ h1 {
   text-decoration: none;
 }
 
+.flash a,
+.empty-state a {
+  color: var(--accent);
+}
+
 .metric a:hover,
 .refresh-link:hover {
   text-decoration: underline;

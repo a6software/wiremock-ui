@@ -4,6 +4,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.ui.ExtendedModelMap
+import uk.co.a6software.wiremock_frontend.config.WireMockFrontendProperties
 import uk.co.a6software.wiremock_frontend.model.MappingDashboardView
 import uk.co.a6software.wiremock_frontend.model.MappingRouteView
 import uk.co.a6software.wiremock_frontend.service.WireMockMappingsService
@@ -13,6 +14,7 @@ import kotlin.test.assertNull
 
 class HomeControllerTest {
     private val mappingsService: WireMockMappingsService = mock()
+    private val properties = WireMockFrontendProperties(baseUrl = "http://wiremock:8080")
 
     @Test
     fun `home adds dashboard to model when service succeeds`() {
@@ -36,11 +38,12 @@ class HomeControllerTest {
         whenever(mappingsService.loadDashboard()).thenReturn(dashboard)
 
         val model = ExtendedModelMap()
-        val controller = HomeController(mappingsService)
+        val controller = HomeController(mappingsService, properties)
 
         assertEquals("index", controller.home(model))
         assertEquals(dashboard, model["dashboard"])
         assertNull(model["fetchError"])
+        assertEquals("http://wiremock:8080", model["wiremockBaseUrl"])
         verify(mappingsService).loadDashboard()
     }
 
@@ -49,11 +52,12 @@ class HomeControllerTest {
         whenever(mappingsService.loadDashboard()).thenThrow(RuntimeException("Connection refused"))
 
         val model = ExtendedModelMap()
-        val controller = HomeController(mappingsService)
+        val controller = HomeController(mappingsService, properties)
 
         assertEquals("index", controller.home(model))
         assertEquals("Connection refused", model["fetchError"])
         assertEquals(null, model["dashboard"])
+        assertEquals("http://wiremock:8080", model["wiremockBaseUrl"])
         verify(mappingsService).loadDashboard()
     }
 }
