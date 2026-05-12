@@ -448,6 +448,23 @@ summary:focus {
   margin-top: 4px;
 }
 
+.payload-expand {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 8px;
+}
+
+.payload-expand summary {
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--muted);
+  padding: 4px 0;
+}
+
+.payload-expand pre {
+  margin-top: 8px;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

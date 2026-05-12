@@ -129,6 +129,10 @@
                                 </div>
                                 <div class="detail-label payload-label">Payload</div>
                                 <pre th:text="${mapping.bodyPreview}">No response body</pre>
+                                <details th:if="${mapping.bodyFull != null}" class="payload-expand">
+                                    <summary>Show full payload</summary>
+                                    <pre th:text="${mapping.bodyFull}"></pre>
+                                </details>
                             </td>
                         </tr>
                     </th:block>

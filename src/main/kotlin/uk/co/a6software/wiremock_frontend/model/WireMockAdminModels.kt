@@ -45,6 +45,7 @@ data class MappingRouteView(
     val status: Int,
     val contentType: String,
     val bodyPreview: String,
+    val bodyFull: String?,
     val searchText: String
 )
 

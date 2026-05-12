@@ -41,7 +41,9 @@ class WireMockMappingsService(
             .firstOrNull { it.key.equals("Content-Type", ignoreCase = true) }
             ?.value
             ?: if (mapping.response.jsonBody != null) "application/json" else "Not set"
-        val preview = buildBodyPreview(mapping.response.jsonBody, mapping.response.body)
+        val fullBody = buildBody(mapping.response.jsonBody, mapping.response.body)
+        val preview = if (fullBody.length <= 800) fullBody else fullBody.take(797) + "..."
+        val bodyFull = if (fullBody.length <= 800) null else fullBody
         val id = mapping.uuid ?: mapping.id ?: "${method.lowercase(Locale.getDefault())}:${route}"
         val searchText = listOf(id, method, route, matcherType, status.toString(), contentType, preview)
             .joinToString(" ")
@@ -55,17 +57,16 @@ class WireMockMappingsService(
             status = status,
             contentType = contentType,
             bodyPreview = preview,
+            bodyFull = bodyFull,
             searchText = searchText
         )
     }
 
-    private fun buildBodyPreview(jsonBody: JsonNode?, rawBody: String?): String {
-        val source = when {
+    private fun buildBody(jsonBody: JsonNode?, rawBody: String?): String {
+        return when {
             jsonBody != null -> objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonBody)
             !rawBody.isNullOrBlank() -> rawBody
             else -> "No response body"
         }.trim()
-
-        return if (source.length <= 800) source else source.take(797) + "..."
     }
 }

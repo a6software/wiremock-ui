@@ -28,6 +28,7 @@ class HomeControllerTest {
                     status = 200,
                     contentType = "application/json",
                     bodyPreview = """{ "username": "DEMO_USER" }""",
+                    bodyFull = null,
                     searchText = "get /demo/users/demo_user"
                 )
             ),
