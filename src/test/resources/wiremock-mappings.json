@@ -415,6 +415,71 @@
       "uuid": "0461452e-8bd5-412f-8853-fc2d4de3347a"
     },
     {
+      "id": "55b13b6f-7f1e-4adf-a46f-2fd0d94fe777",
+      "request": {
+        "url": "/demo/users/DEMO_USER/activity-report",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "username": "DEMO_USER",
+          "generatedAt": "2026-05-13T10:15:30Z",
+          "summary": "Large demo payload used to exercise response preview truncation in the frontend.",
+          "activity": [
+            {
+              "id": "activity-001",
+              "type": "profile-view",
+              "sourceSystem": "demo-portal",
+              "description": "User opened the account profile page and reviewed nested contact information, roles, site assignments, and recent authentication events.",
+              "metadata": {
+                "requestId": "req-demo-001",
+                "correlationId": "corr-demo-001",
+                "notes": "This deliberately verbose text keeps the rendered JSON body above the preview truncation threshold."
+              }
+            },
+            {
+              "id": "activity-002",
+              "type": "role-audit",
+              "sourceSystem": "directory-service",
+              "description": "User role history was expanded to include reviewer, tester, approver, and support permissions across multiple simulated application domains.",
+              "metadata": {
+                "requestId": "req-demo-002",
+                "correlationId": "corr-demo-002",
+                "notes": "The payload should show an abbreviated preview first, with the complete body available in the expandable details control."
+              }
+            },
+            {
+              "id": "activity-003",
+              "type": "site-lookup",
+              "sourceSystem": "sites-api",
+              "description": "A site assignment lookup returned several locations, feature flags, operational labels, and audit attributes for visual inspection.",
+              "metadata": {
+                "requestId": "req-demo-003",
+                "correlationId": "corr-demo-003",
+                "notes": "Additional nested fields make this fixture useful for checking line wrapping and scroll behavior inside payload blocks."
+              }
+            },
+            {
+              "id": "activity-004",
+              "type": "notification-sync",
+              "sourceSystem": "notification-service",
+              "description": "Notification preferences were synchronized with email, push, digest, reminder, escalation, and fallback delivery options enabled.",
+              "metadata": {
+                "requestId": "req-demo-004",
+                "correlationId": "corr-demo-004",
+                "notes": "The final rendered response is intentionally larger than eight hundred characters after pretty printing."
+              }
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      },
+      "uuid": "55b13b6f-7f1e-4adf-a46f-2fd0d94fe777"
+    },
+    {
       "id": "ba8f07b9-f08b-4774-9809-8592e4886671",
       "request": {
         "url": "/demo/users/DEMO_USER",
@@ -440,6 +505,6 @@
     }
   ],
   "meta": {
-    "total": 20
+    "total": 21
   }
 }

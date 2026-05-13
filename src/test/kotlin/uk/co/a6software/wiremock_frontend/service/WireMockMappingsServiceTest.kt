@@ -10,6 +10,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class WireMockMappingsServiceTest {
@@ -26,7 +27,7 @@ class WireMockMappingsServiceTest {
 
         val dashboard = service.loadDashboard()
 
-        assertEquals(20, dashboard.totalMappings)
+        assertEquals(21, dashboard.totalMappings)
         assertEquals(4, dashboard.methodBreakdown["POST"])
         assertEquals("http://wiremock:8080/__admin/mappings", dashboard.sourceUrl)
 
@@ -40,5 +41,11 @@ class WireMockMappingsServiceTest {
         val patternRoute = dashboard.mappings.first { it.route == "/auth/logout.*" }
         assertEquals("URL Pattern", patternRoute.matcherType)
         assertTrue(patternRoute.bodyPreview.contains("Login page"))
+
+        val largePayloadRoute = dashboard.mappings.first { it.route == "/demo/users/DEMO_USER/activity-report" }
+        assertEquals(800, largePayloadRoute.bodyPreview.length)
+        assertTrue(largePayloadRoute.bodyPreview.endsWith("..."))
+        assertNotNull(largePayloadRoute.bodyFull)
+        assertTrue(largePayloadRoute.bodyFull.length > largePayloadRoute.bodyPreview.length)
     }
 }

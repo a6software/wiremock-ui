@@ -209,6 +209,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   tableBody.addEventListener("click", async (event) => {
+    const payloadToggle = event.target instanceof Element ? event.target.closest(".payload-toggle") : null;
+    if (payloadToggle) {
+      const detailRow = payloadToggle.closest(".route-detail-row");
+      const payloadBody = detailRow?.querySelector(".payload-body");
+      if (!payloadBody) return;
+
+      const nextExpanded = payloadToggle.getAttribute("aria-expanded") !== "true";
+      const preview = payloadBody.getAttribute("data-preview") ?? "";
+      const full = payloadBody.getAttribute("data-full") ?? preview;
+
+      payloadToggle.setAttribute("aria-expanded", String(nextExpanded));
+      payloadToggle.textContent = nextExpanded ? "Show truncated payload" : "Show full payload";
+      payloadBody.textContent = nextExpanded ? full : preview;
+      return;
+    }
+
     const button = event.target instanceof Element ? event.target.closest(".copy-route-button") : null;
     if (!button) return;
 

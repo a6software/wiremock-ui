@@ -127,12 +127,20 @@
                                         <div class="mono-cell" th:text="${mapping.id}">mapping-id</div>
                                     </div>
                                 </div>
-                                <div class="detail-label payload-label">Payload</div>
-                                <pre th:text="${mapping.bodyPreview}">No response body</pre>
-                                <details th:if="${mapping.bodyFull != null}" class="payload-expand">
-                                    <summary>Show full payload</summary>
-                                    <pre th:text="${mapping.bodyFull}"></pre>
-                                </details>
+                                <div class="payload-heading">
+                                    <div class="detail-label payload-label">Payload</div>
+                                    <button
+                                        th:if="${mapping.bodyFull != null}"
+                                        type="button"
+                                        class="payload-toggle"
+                                        aria-expanded="false">
+                                        Show full payload
+                                    </button>
+                                </div>
+                                <pre
+                                    class="payload-body"
+                                    th:attr="data-preview=${mapping.bodyPreview},data-full=${mapping.bodyFull}"
+                                    th:text="${mapping.bodyPreview}">No response body</pre>
                             </td>
                         </tr>
                     </th:block>
@@ -154,6 +162,6 @@
         <a th:href="${wiremockBaseUrl}" th:text="${wiremockBaseUrl}" target="_blank" rel="noreferrer">http://wiremock:8080</a>
     </section>
 </div>
-<script th:src="@{/js/filter.js}" src="/js/filter.js"></script>
+<script th:src="@{/js/filter.js(v='payload-toggle-2')}" src="/js/filter.js?v=payload-toggle-2"></script>
 </body>
 </html>

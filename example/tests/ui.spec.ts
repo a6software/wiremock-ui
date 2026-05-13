@@ -27,14 +27,14 @@ test.beforeEach(async ({ page, context, baseURL }) => {
 
 test("renders mappings table in default WireMock order", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Wiremock Mappings" })).toBeVisible();
-  await expect(page.getByText("20 visible")).toBeVisible();
+  await expect(page.getByText("21 visible")).toBeVisible();
 
   const routes = await visibleRoutes(page);
   expect(routes.slice(0, 4)).toEqual([
     "/demo/users/DEMO_USER",
+    "/demo/users/DEMO_USER/activity-report",
     "/directory/users/DEMO_USER/email",
     "/assignmentsapi/users/DEMO_USER/workloads",
-    "/locations/api/sites/type/primary",
   ]);
 });
 
@@ -89,17 +89,53 @@ test("sorting cycles ascending descending and back to default order", async ({ p
 });
 
 test("row chevron expands details and header chevron expands all visible rows", async ({ page }) => {
-  await expect(page.locator(".route-detail-row.hidden")).toHaveCount(20);
+  await expect(page.locator(".route-detail-row.hidden")).toHaveCount(21);
 
   await page.locator(".route-row .expand-toggle").first().click();
-  await expect(page.locator(".route-detail-row.hidden")).toHaveCount(19);
+  await expect(page.locator(".route-detail-row.hidden")).toHaveCount(20);
   await expect(page.locator(".route-detail-row:not(.hidden)").first().getByText("Mapping ID")).toBeVisible();
 
   await page.getByRole("button", { name: "Expand all rows" }).click();
   await expect(page.locator(".route-detail-row.hidden")).toHaveCount(0);
 
   await page.getByRole("button", { name: "Collapse all rows" }).click();
-  await expect(page.locator(".route-detail-row.hidden")).toHaveCount(20);
+  await expect(page.locator(".route-detail-row.hidden")).toHaveCount(21);
+});
+
+test("large response payload is truncated with full payload available", async ({ page }) => {
+  await page.getByLabel("Search by route").fill("/demo/users/DEMO_USER/activity-report");
+  await expect(page.getByText("1 visible")).toBeVisible();
+
+  const routeRow = page.locator(".route-row:not(.hidden)").filter({
+    has: page.locator(".route-cell code", { hasText: "/demo/users/DEMO_USER/activity-report" }),
+  });
+  await expect(routeRow).toHaveCount(1);
+  await routeRow.locator(".expand-toggle").click();
+
+  const detailRow = page.locator(".route-detail-row:not(.hidden)");
+  const payloadBody = detailRow.locator(".payload-body");
+  const payloadToggle = detailRow.getByRole("button", { name: "Show full payload" });
+
+  await expect(payloadBody).toHaveCount(1);
+  await expect(payloadBody).toBeVisible();
+  await expect(payloadBody).toHaveText(/\.{3}$/);
+  await expect(payloadBody).not.toContainText("notification-service");
+  await expect(detailRow.getByText("Show truncated payload")).toHaveCount(0);
+
+  await payloadToggle.click();
+  await expect(payloadBody).toHaveCount(1);
+  await expect(payloadBody).toContainText("notification-service");
+  await expect(payloadBody).toContainText("larger than eight hundred characters");
+  await expect(payloadBody).not.toHaveText(/\.{3}$/);
+  await expect(detailRow.getByRole("button", { name: "Show truncated payload" })).toHaveAttribute("aria-expanded", "true");
+  await expect(detailRow.getByText("Show full payload")).toHaveCount(0);
+
+  await detailRow.getByRole("button", { name: "Show truncated payload" }).click();
+  await expect(payloadBody).toHaveCount(1);
+  await expect(payloadBody).toHaveText(/\.{3}$/);
+  await expect(payloadBody).not.toContainText("notification-service");
+  await expect(detailRow.getByRole("button", { name: "Show full payload" })).toHaveAttribute("aria-expanded", "false");
+  await expect(detailRow.getByText("Show truncated payload")).toHaveCount(0);
 });
 
 test("copy route button writes the route to the clipboard", async ({ page }) => {

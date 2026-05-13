@@ -39,9 +39,34 @@ When finished:
 npm run compose:down
 ```
 
+## Run against `bootRun`
+
+To use the example WireMock container with the app started from source, start only WireMock from this folder:
+
+```bash
+docker compose -f docker-compose.yml up wiremock
+```
+
+Then start the Spring Boot app from the repo root:
+
+```bash
+WIREMOCK_BASE_URL=http://localhost:9091 PORT=8783 ./gradlew bootRun
+```
+
+Open the UI at `http://localhost:8783`.
+
+For Playwright, run the test directly from this folder:
+
+```bash
+npx playwright test
+```
+
+Do not use `npm run test:e2e` for this mode. Its `pretest:e2e` script builds the image and starts the full Docker Compose stack, including the frontend container.
+
 ## Notes
 
 - The frontend container uses the local `example-wiremock-frontend:latest` image.
+- Use `WIREMOCK_BASE_URL=http://localhost:9091` when the UI runs directly on your host with `bootRun`.
 - The example reuses the main test fixture instead of maintaining a separate mapping copy.
 - The Playwright test hits the running UI at `http://127.0.0.1:8783`.
 - This folder is only for demo and smoke-test purposes.

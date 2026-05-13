@@ -445,24 +445,31 @@ summary:focus {
 }
 
 .payload-label {
-  margin-top: 4px;
+  margin: 0;
 }
 
-.payload-expand {
-  border-top: none;
-  padding-top: 0;
-  margin-top: 8px;
+.payload-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0;
 }
 
-.payload-expand summary {
+.payload-toggle {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
   font-size: 0.82rem;
   font-weight: 400;
-  color: var(--muted);
   padding: 4px 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.payload-expand pre {
-  margin-top: 8px;
+.payload-toggle:hover {
+  color: var(--text);
 }
 
 .sr-only {
